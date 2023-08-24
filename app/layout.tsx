@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import TrpcProvider from "@/trpc/Provider";
+import MotionProvider from "@/components/wrappers/FramerMotion/MotionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang="en">
 			<body className={`${inter.className} bg-slate-100 w-full h-full overscroll-none`}>
-				<TrpcProvider>{children}</TrpcProvider>
+				<TrpcProvider>
+					<MotionProvider>{children}</MotionProvider>
+				</TrpcProvider>
 			</body>
 		</html>
 	);
