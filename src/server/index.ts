@@ -28,6 +28,10 @@ export const appRouter = router({
 			await db.insert(todos).values({ name: input.name, content: input.content, done: 0 }).run();
 			return true;
 		}),
+	deleteTodo: publicProcedure.input(z.number()).mutation(async ({ input, ctx }) => {
+		await db.delete(todos).where(eq(todos.id, input)).run();
+		return true;
+	}),
 	setDone: publicProcedure
 		.input(
 			z.object({
@@ -35,8 +39,8 @@ export const appRouter = router({
 				done: z.number(),
 			})
 		)
-		.mutation(async (opts) => {
-			await db.update(todos).set({ done: opts.input.done }).where(eq(todos.id, opts.input.id)).run();
+		.mutation(async ({ input, ctx }) => {
+			await db.update(todos).set({ done: input.done }).where(eq(todos.id, input.id)).run();
 			return true;
 		}),
 });

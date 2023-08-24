@@ -1,7 +1,7 @@
 "use client";
 // Import External
 import { tv } from "tailwind-variants";
-import { IoCheckmarkCircle, IoCheckmarkCircleOutline } from "react-icons/io5";
+import { IoCheckmarkCircle, IoCheckmarkCircleOutline, IoTrashOutline } from "react-icons/io5";
 
 // Import Internal
 import { trpc } from "@/trpc/client";
@@ -12,6 +12,7 @@ const _styles = tv({
 	slots: {
 		name: "text-lg",
 		checkIcon: "text-red-500 cursor-pointer",
+		binIcon: "text-red-500 cursor-pointer",
 	},
 });
 
@@ -30,6 +31,12 @@ export default function TodoCard({ id, name, isComplete }: ITodoCard) {
 		},
 	});
 
+	const deleteTodo = trpc.deleteTodo.useMutation({
+		onSettled() {
+			utils.getTodos.invalidate();
+		},
+	});
+
 	return (
 		<Card key={id} className={styles.base()}>
 			<p className={styles.name()}>{name ?? "Undefined"}</p>
@@ -39,6 +46,9 @@ export default function TodoCard({ id, name, isComplete }: ITodoCard) {
 				) : (
 					<IoCheckmarkCircleOutline size={30} className={styles.checkIcon()} />
 				)}
+			</span>
+			<span>
+				<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
 			</span>
 		</Card>
 	);
