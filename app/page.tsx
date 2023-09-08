@@ -5,7 +5,7 @@ import { serverClient } from "@/trpc/serverClient";
 export default async function Home() {
 	const todos = await serverClient.todos.getAll();
 	return (
-		<main className="max-w-3xl mx-auto mt-5">
+		<main className="max-w-3xl mx-auto pt-5">
 			<TodoList initialTodos={todos} />
 
 			<div className="grid grid-cols-3 gap-4">

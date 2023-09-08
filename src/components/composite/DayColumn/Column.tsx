@@ -2,7 +2,6 @@
 
 import { Todo } from "@/db/schema";
 import { trpc } from "@/trpc/client";
-import { get } from "http";
 import TodoCard from "../TodoCard";
 import { DragEvent, useCallback } from "react";
 import { AnimatePresence, m } from "framer-motion";

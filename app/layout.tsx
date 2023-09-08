@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import TrpcProvider from "@/trpc/Provider";
 import MotionProvider from "@/components/wrappers/FramerMotion/MotionProvider";
+import ClientProviders from "./ClientProviders";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,10 +16,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
-			<body className={`${inter.className} bg-slate-100 w-full h-full overscroll-none`}>
-				<TrpcProvider>
-					<MotionProvider>{children}</MotionProvider>
-				</TrpcProvider>
+			<body className={`${inter.className} bg-slate-100 w-full h-full min-h-screen overscroll-none`}>
+				<ClientProviders>
+					<TrpcProvider>
+						<MotionProvider>{children}</MotionProvider>
+					</TrpcProvider>
+				</ClientProviders>
 			</body>
 		</html>
 	);

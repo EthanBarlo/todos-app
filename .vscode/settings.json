@@ -1,6 +1,6 @@
 {
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"cSpell.words": ["tanstack", "todos"],
+	"cSpell.words": ["nextui", "tanstack", "todos"],
 	"tailwindCSS.experimental.classRegex": [["tv\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]],
 	"files.exclude": {
 		"drizzle": true,
