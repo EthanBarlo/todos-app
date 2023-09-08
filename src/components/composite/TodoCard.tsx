@@ -6,50 +6,55 @@ import { IoCheckmarkCircle, IoCheckmarkCircleOutline, IoTrashOutline } from "rea
 // Import Internal
 import { trpc } from "@/trpc/client";
 import { Card } from "@/components/atomic";
+import { useCallback } from "react";
+
+import { Todo } from "@/db/schema";
 
 const _styles = tv({
-	base: "text-black",
+	base: "text-black hover:scale-[1.0125] hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-in-out",
 	slots: {
 		name: "text-lg",
-		checkIcon: "text-red-500 cursor-pointer",
+		checkIcon: "text-green-700 cursor-pointer",
 		binIcon: "text-red-500 cursor-pointer",
 	},
 });
 
-interface ITodoCard {
-	id: number;
-	name: string | null;
-	isComplete: boolean;
-}
-export default function TodoCard({ id, name, isComplete }: ITodoCard) {
+export default function TodoCard({ id, name, done, scheduledDay }: Todo) {
 	const styles = _styles();
 
 	const utils = trpc.useContext();
-	const setDone = trpc.setDone.useMutation({
+	const updateTodo = trpc.todos.update.useMutation({
 		onSettled() {
-			utils.getTodos.invalidate();
+			utils.todos.getAll.invalidate();
+			utils.todos.getAllByDay.invalidate(scheduledDay ?? "");
+		},
+	});
+	const deleteTodo = trpc.todos.delete.useMutation({
+		onSettled() {
+			utils.todos.getAll.invalidate();
+			utils.todos.getAllByDay.invalidate(scheduledDay ?? "");
 		},
 	});
 
-	const deleteTodo = trpc.deleteTodo.useMutation({
-		onSettled() {
-			utils.getTodos.invalidate();
+	// Sets the draggable data to the id of the todo, which we use in the dropzone to identify which todo to move
+	const onDrag = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			e.dataTransfer.setData("id", id.toString());
+			e.dataTransfer.setData("previousDay", scheduledDay ?? "");
 		},
-	});
+		[id]
+	);
 
+	const CheckMarkComponent = done ? IoCheckmarkCircle : IoCheckmarkCircleOutline;
 	return (
-		<Card key={id} className={styles.base()}>
+		<Card key={id} className={styles.base()} draggable onDragStart={onDrag}>
 			<p className={styles.name()}>{name ?? "Undefined"}</p>
-			<span onClick={() => setDone.mutate({ id: id, done: isComplete ? 0 : 1 })}>
-				{isComplete ? (
-					<IoCheckmarkCircle size={30} className={styles.checkIcon()} />
-				) : (
-					<IoCheckmarkCircleOutline size={30} className={styles.checkIcon()} />
-				)}
-			</span>
-			<span>
-				<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
-			</span>
+			<CheckMarkComponent
+				size={30}
+				className={styles.checkIcon()}
+				onClick={() => updateTodo.mutate({ id, done: done ? 0 : 1 })}
+			/>
+			<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
 		</Card>
 	);
 }

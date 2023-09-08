@@ -8,17 +8,18 @@ import { useState } from "react";
 // Import Internal
 import { trpc } from "@/trpc/client";
 import TodoCard from "@/components/composite/TodoCard";
+import { Todo } from "@/db/schema";
 
 interface ITodoList {
-	initialTodos: Awaited<ReturnType<(typeof serverClient)["getTodos"]>>;
+	initialTodos: Awaited<ReturnType<(typeof serverClient)["todos"]["getAll"]>>;
 }
 export default function TodoList({ initialTodos }: ITodoList) {
-	const getTodos = trpc.getTodos.useQuery(undefined, {
+	const getTodos = trpc.todos.getAll.useQuery(undefined, {
 		initialData: initialTodos,
 		refetchOnMount: false,
 		refetchOnReconnect: false,
 	});
-	const addTodo = trpc.addTodo.useMutation({
+	const addTodo = trpc.todos.create.useMutation({
 		onSettled: () => {
 			getTodos.refetch();
 		},
@@ -29,11 +30,10 @@ export default function TodoList({ initialTodos }: ITodoList) {
 
 	return (
 		<div>
-			<div className="grid grid-cols-2 gap-3">
-				{getTodos?.data?.map((todo) => (
-					<TodoCard key={todo.id} id={todo.id} name={todo.name} isComplete={todo.done === 1} />
-				))}
-			</div>
+			{getTodos.data.map((todo) => (
+				<TodoCard {...(todo as Todo)} />
+			))}
+
 			<div className="flex gap-3 items-center">
 				<label htmlFor="name">Name</label>
 				<input
