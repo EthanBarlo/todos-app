@@ -7,9 +7,5 @@ interface IMotionProvider {
 	children: React.ReactNode;
 }
 export default function MotionProvider({ children }: IMotionProvider) {
-	return (
-		<LazyMotion features={loadFeatures} strict>
-			{children}
-		</LazyMotion>
-	);
+	return <LazyMotion features={loadFeatures}>{children}</LazyMotion>;
 }

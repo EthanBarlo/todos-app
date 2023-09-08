@@ -34,6 +34,6 @@ export const todos_router = router({
 		)
 		.mutation(async ({ input, ctx }) => {
 			const result = await db.update(todos).set(input).where(eq(todos.id, input.id)).run();
-			return result.changes === 1;
+			return true;
 		}),
 });

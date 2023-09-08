@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
-			<body className={`${inter.className} bg-slate-100 w-full h-full min-h-screen overscroll-none`}>
+			<body className={`${inter.className} bg-background w-full h-full min-h-screen overscroll-none`}>
 				<ClientProviders>
 					<TrpcProvider>
 						<MotionProvider>{children}</MotionProvider>

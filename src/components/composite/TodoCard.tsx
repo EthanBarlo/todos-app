@@ -1,17 +1,18 @@
 "use client";
 // Import External
 import { tv } from "tailwind-variants";
-import { IoCheckmarkCircle, IoCheckmarkCircleOutline, IoTrashOutline } from "react-icons/io5";
+import { IoTrashOutline } from "react-icons/io5";
 
 // Import Internal
 import { trpc } from "@/trpc/client";
-import { Card } from "@/components/atomic";
 import { useCallback } from "react";
 
 import { Todo } from "@/db/schema";
+import { Checkbox } from "@nextui-org/checkbox";
+import { Card, CardBody } from "@nextui-org/card";
 
 const _styles = tv({
-	base: "text-black hover:scale-[1.0125] hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-in-out",
+	base: "text-foreground hover:scale-[1.0125] hover:-translate-y-1 transition-all duration-300 ease-in-out",
 	slots: {
 		name: "text-lg",
 		checkIcon: "text-green-700 cursor-pointer",
@@ -45,16 +46,17 @@ export default function TodoCard({ id, name, done, scheduledDay }: Todo) {
 		[id]
 	);
 
-	const CheckMarkComponent = done ? IoCheckmarkCircle : IoCheckmarkCircleOutline;
 	return (
 		<Card key={id} className={styles.base()} draggable onDragStart={onDrag}>
-			<p className={styles.name()}>{name ?? "Undefined"}</p>
-			<CheckMarkComponent
-				size={30}
-				className={styles.checkIcon()}
-				onClick={() => updateTodo.mutate({ id, done: done ? 0 : 1 })}
-			/>
-			<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
+			<CardBody>
+				<Checkbox
+					isSelected={done === 1}
+					onValueChange={(value) => updateTodo.mutate({ id, done: value ? 1 : 0 })}
+					lineThrough>
+					<p className={styles.name()}>{name ?? "Undefined"}</p>
+				</Checkbox>
+				<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
+			</CardBody>
 		</Card>
 	);
 }

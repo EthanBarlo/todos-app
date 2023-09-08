@@ -37,7 +37,7 @@ export default function Column({ day, initialTodos }: Column) {
 
 	return (
 		<section
-			className="grow space-y-2 bg-black/10 p-1 rounded-md"
+			className="grow space-y-2  p-1 rounded-md"
 			onDragOver={(e) => e.preventDefault()} // This required to enable the onDrop event
 			onDrop={onDrop}>
 			<AnimatePresence mode="popLayout" initial={false}>
