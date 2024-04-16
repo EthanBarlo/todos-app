@@ -11,6 +11,9 @@ export const todos_router = router({
 	getAllByDay: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
 		return await db.select().from(todos).where(eq(todos.scheduledDay, input)).all();
 	}),
+	get: publicProcedure.input(z.number()).query(async ({ input, ctx }) => {
+		return await db.select().from(todos).where(eq(todos.id, input)).get();
+	}),
 	create: publicProcedure
 		.input(
 			z.object({

@@ -3,8 +3,8 @@
 import { Todo } from "@/db/schema";
 import { trpc } from "@/trpc/client";
 import TodoCard from "../TodoCard";
-import { DragEvent, useCallback } from "react";
-import { AnimatePresence, m } from "framer-motion";
+import { DragEvent, useCallback, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface Column {
 	day: string;
@@ -24,9 +24,12 @@ export default function Column({ day, initialTodos }: Column) {
 		},
 	});
 
+	const [showPlaceholder, setPlaceholder] = useState(false);
+
 	const onDrop = useCallback(
 		async (e: DragEvent<HTMLElement>) => {
 			e.preventDefault();
+			setPlaceholder(false);
 			const id = e.dataTransfer.getData("id");
 			const previousDay = e.dataTransfer.getData("previousDay");
 			if (previousDay === day) return;
@@ -35,21 +38,33 @@ export default function Column({ day, initialTodos }: Column) {
 		[day]
 	);
 
+	// const onDragOver = useCallback((e: DragEvent<HTMLElement>) => {
+	// 	e.preventDefault();
+	// 	setPlaceholder(true);
+	// }, []);
+
 	return (
 		<section
-			className="grow space-y-2  p-1 rounded-md"
+			className="grow space-y-2 bg-slate-100 p-2 rounded-2xl"
 			onDragOver={(e) => e.preventDefault()} // This required to enable the onDrop event
+			onDragEnter={() => setPlaceholder(true)}
+			onDragLeave={() => setPlaceholder(false)}
 			onDrop={onDrop}>
-			<AnimatePresence mode="popLayout" initial={false}>
-				{getTodos.data.map((todo) => (
-					<m.div
-						key={todo.id}
-						initial={{ height: 0 }}
-						animate={{ height: "auto" }}
-						exit={{ opacity: [0, 0], height: 0 }}>
+			{getTodos.data &&
+				getTodos.data.map((todo) => (
+					<motion.div layout key={todo.id}>
 						<TodoCard {...todo} />
-					</m.div>
+					</motion.div>
 				))}
+			<AnimatePresence>
+				{showPlaceholder && (
+					<motion.div
+						initial={{ height: 0 }}
+						animate={{ height: "3rem" }}
+						exit={{ height: 0 }}
+						className="bg-slate-300 w-full rounded-xl"
+					/>
+				)}
 			</AnimatePresence>
 		</section>
 	);

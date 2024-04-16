@@ -1,15 +1,17 @@
 "use client";
+// Import Types
+import { Todo } from "@/db/schema";
+
 // Import External
+import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 import { IoTrashOutline } from "react-icons/io5";
+import { Checkbox } from "@nextui-org/checkbox";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 // Import Internal
 import { trpc } from "@/trpc/client";
-import { useCallback } from "react";
-
-import { Todo } from "@/db/schema";
-import { Checkbox } from "@nextui-org/checkbox";
-import { Card, CardBody } from "@nextui-org/card";
+import Link from "next/link";
 
 const _styles = tv({
 	base: "text-foreground hover:scale-[1.0125] hover:-translate-y-1 transition-all duration-300 ease-in-out",
@@ -20,7 +22,7 @@ const _styles = tv({
 	},
 });
 
-export default function TodoCard({ id, name, done, scheduledDay }: Todo) {
+export default function TodoCard({ id, name, done, scheduledDay, content }: Todo) {
 	const styles = _styles();
 
 	const utils = trpc.useContext();
@@ -47,16 +49,19 @@ export default function TodoCard({ id, name, done, scheduledDay }: Todo) {
 	);
 
 	return (
-		<Card key={id} className={styles.base()} draggable onDragStart={onDrag}>
-			<CardBody>
-				<Checkbox
-					isSelected={done === 1}
-					onValueChange={(value) => updateTodo.mutate({ id, done: value ? 1 : 0 })}
-					lineThrough>
-					<p className={styles.name()}>{name ?? "Undefined"}</p>
-				</Checkbox>
-				<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
-			</CardBody>
-		</Card>
+		<Link href={`/todo/${id}`}>
+			<Card key={id} className={styles.base()} draggable onDragStart={onDrag}>
+				<CardHeader className="flex w-full justify-between">
+					<Checkbox
+						isSelected={done === 1}
+						onValueChange={(value) => updateTodo.mutate({ id, done: value ? 1 : 0 })}
+						lineThrough>
+						<p className={styles.name()}>{name ?? "Undefined"}</p>
+					</Checkbox>
+					<IoTrashOutline size={30} className={styles.binIcon()} onClick={() => deleteTodo.mutate(id)} />
+				</CardHeader>
+				<CardBody className="pt-0 text-sm text-foreground-500">{content}</CardBody>
+			</Card>
+		</Link>
 	);
 }

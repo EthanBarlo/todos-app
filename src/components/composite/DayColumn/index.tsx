@@ -1,6 +1,6 @@
 import { serverClient } from "@/trpc/serverClient";
 import Column from "./Column";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 interface DayColumn {
 	day: string;
@@ -10,8 +10,10 @@ export default async function DayColumn({ day }: DayColumn) {
 
 	return (
 		<Card className="flex flex-col">
-			<CardBody>
+			<CardHeader>
 				<h2>{day}</h2>
+			</CardHeader>
+			<CardBody>
 				<Column day={day} initialTodos={todos} />
 			</CardBody>
 		</Card>
